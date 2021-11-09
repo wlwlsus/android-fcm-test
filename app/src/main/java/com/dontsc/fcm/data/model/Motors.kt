@@ -2,7 +2,6 @@ package com.dontsc.fcm.data.model
 
 
 import com.google.gson.annotations.SerializedName
-import kotlin.collections.HashMap
 
 
 data class Motors(
@@ -18,18 +17,4 @@ data class Motors(
   val m5: M5,
   @SerializedName("m6")
   val m6: M6
-) {
-
-  fun toMap(): Map<String, Any> {
-    val input = HashMap<String, Any>()
-    input["m1"] = m1
-    input["m2"] = m2
-    input["m3"] = m3
-    input["m4"] = m4
-    input["m5"] = m5
-    input["m6"] = m6
-    return input
-  }
-
-
-}
+)

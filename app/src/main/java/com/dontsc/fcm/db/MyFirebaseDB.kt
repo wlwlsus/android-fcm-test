@@ -27,10 +27,12 @@ object MyFirebaseDB {
     mDatabase.child("kiosk_id").child(id).child("motors")
       .addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-          val post = snapshot.getValue(Motors::class.java)
-          Log.e(TAG, "onDataChange: $post")
+          Log.e(TAG, "snapshot : $snapshot")
+          val post = snapshot.children.forEach {
+            Log.e(TAG, "foreach 데이터!: ${it.value}")
+          }
 
-//        Log.e(TAG, "onDataChange: $snapshot")
+//          Log.e(TAG, "onDataChange: $post")
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -38,6 +40,4 @@ object MyFirebaseDB {
         }
       })
   }
-
-
 }
