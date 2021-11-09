@@ -1,7 +1,7 @@
 package com.dontsc.fcm
 
 import android.util.Log
-import com.dontsc.view.MainActivity.Companion.liveTextView
+import com.dontsc.fcm.view.MainActivity.Companion.liveTextView
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

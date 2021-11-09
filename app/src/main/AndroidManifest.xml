@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FCM" >
         <activity
-            android:name="com.dontsc.view.DatabaseActivity"
+            android:name="com.dontsc.fcm.view.DatabaseActivity"
             android:exported="false" />
         <activity
-            android:name="com.dontsc.view.MainActivity"
+            android:name="com.dontsc.fcm.view.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

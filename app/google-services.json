@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "333459345337",
+    "firebase_url": "https://fcm-test-3b60c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fcm-test-3b60c",
+    "storage_bucket": "fcm-test-3b60c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333459345337:android:2016842ac99b34bdb9f068",
+        "android_client_info": {
+          "package_name": "com.dontsc.fcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333459345337-e8i3vm9ilcdnhej19je04i8kru9cfl50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1N5_81clmLh_NFkTFawYvc58TCsFgwbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "333459345337-e8i3vm9ilcdnhej19je04i8kru9cfl50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

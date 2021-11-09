@@ -1,4 +1,4 @@
-package com.dontsc.view
+package com.dontsc.fcm.view
 
 import android.content.Intent
 import android.os.Bundle

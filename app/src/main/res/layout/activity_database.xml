@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dontsc.view.DatabaseActivity">
+    tools:context=".view.DatabaseActivity">
 
   <Button
       android:id="@+id/goHome"
@@ -17,4 +17,110 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1.0" />
+
+  <EditText
+      android:id="@+id/motor_no"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ems="10"
+      android:hint="모터 번호"
+      android:inputType="textPersonName"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.63"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.17000002" />
+
+  <TextView
+      android:id="@+id/motor_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Motor : "
+      app:layout_constraintBottom_toBottomOf="@+id/motor_no"
+      app:layout_constraintEnd_toStartOf="@+id/motor_no"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/motor_no" />
+
+  <TextView
+      android:id="@+id/stock_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Stock : "
+      app:layout_constraintBottom_toBottomOf="@+id/stock_value"
+      app:layout_constraintEnd_toStartOf="@+id/stock_value"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/stock_value" />
+
+  <EditText
+      android:id="@+id/stock_value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ems="10"
+      android:hint="재고 입력"
+      android:inputType="textPersonName"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/motor_no"
+      app:layout_constraintHorizontal_bias="1.0"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.26999998" />
+
+  <Button
+      android:id="@+id/save_btn"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Save"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="@+id/stock_text"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <Button
+      android:id="@+id/read_btn"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Read"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/stock_value"
+      app:layout_constraintHorizontal_bias="1.0"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <Button
+      android:id="@+id/initialization"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="초기화"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="@+id/stock_text"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.57" />
+
+  <TextView
+      android:id="@+id/id_text"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Id : "
+      app:layout_constraintBottom_toBottomOf="@+id/id_text_input"
+      app:layout_constraintEnd_toStartOf="@+id/id_text_input"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/id_text_input" />
+
+  <EditText
+      android:id="@+id/id_text_input"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:ems="10"
+      android:hint="키오스크 번호"
+      android:inputType="textPersonName"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/motor_no"
+      app:layout_constraintHorizontal_bias="1.0"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.06999999" />
 </androidx.constraintlayout.widget.ConstraintLayout>
