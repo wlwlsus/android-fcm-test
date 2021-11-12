@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.DatabaseActivity">
 
-  <Button
+    <Button
       android:id="@+id/goHome"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="100dp"
+      android:layout_marginBottom="30dp"
       android:text="Home"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
@@ -18,12 +20,12 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="1.0" />
 
-  <EditText
+    <EditText
       android:id="@+id/motor_no"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:ems="10"
-      android:hint="모터 번호"
+      android:hint="M-번호"
       android:inputType="textPersonName"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +34,7 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.17000002" />
 
-  <TextView
+    <TextView
       android:id="@+id/motor_text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -42,7 +44,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="@+id/motor_no" />
 
-  <TextView
+    <TextView
       android:id="@+id/stock_text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -52,7 +54,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="@+id/stock_value" />
 
-  <EditText
+    <EditText
       android:id="@+id/stock_value"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -66,7 +68,7 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.26999998" />
 
-  <Button
+    <Button
       android:id="@+id/save_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -77,7 +79,7 @@
       app:layout_constraintStart_toStartOf="@+id/stock_text"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <Button
+    <Button
       android:id="@+id/read_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -88,7 +90,7 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <Button
+    <Button
       android:id="@+id/initialization"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -100,7 +102,7 @@
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.57" />
 
-  <TextView
+    <TextView
       android:id="@+id/id_text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -110,18 +112,19 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="@+id/id_text_input" />
 
-  <EditText
+    <EditText
       android:id="@+id/id_text_input"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:ems="10"
-      android:text="001"
-      android:hint="키오스크 번호"
+      android:hint="K-번호"
       android:inputType="textPersonName"
+      android:text="001"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="@+id/motor_no"
       app:layout_constraintHorizontal_bias="1.0"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.069" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

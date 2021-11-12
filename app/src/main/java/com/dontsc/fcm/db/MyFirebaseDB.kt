@@ -1,10 +1,7 @@
 package com.dontsc.fcm.db
 
 import android.util.Log
-import com.dontsc.fcm.data.model.*
 import com.google.firebase.database.*
-import java.util.*
-import kotlin.collections.HashMap
 
 object MyFirebaseDB {
 
@@ -39,14 +36,7 @@ object MyFirebaseDB {
     mDatabase.child("kiosk_id").child(id).child("motors")
       .addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-//          Motors(snapshot.children.map{it.value})
-//          Log.e(TAG, "onDataChange: ${post["m1"]}")
-//          Log.e(TAG, "snapshot : $snapshot")
-//          val post = snapshot.children.map { ds ->
-//            Log.e(TAG, "onDataChange: ${ds.key}")
-//            motors = Motors(ds.key, ds.child("stock").value)
-//            Log.e(TAG, "foreach 데이터!: ${ds.key}, ${ds.child("stock").value} ")
-//          }
+
         }
 
         override fun onCancelled(error: DatabaseError) {
