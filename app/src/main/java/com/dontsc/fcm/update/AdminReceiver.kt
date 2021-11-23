@@ -1,4 +1,4 @@
-package com.dontsc.fcm.kiosk
+package com.dontsc.fcm.update
 
 import android.app.admin.DeviceAdminReceiver
 import android.widget.Toast

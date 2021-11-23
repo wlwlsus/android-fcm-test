@@ -19,32 +19,35 @@ import java.io.File
 import android.content.Context
 import android.util.Log
 import com.dontsc.fcm.R
-import java.io.IOException
-
-import android.content.IntentSender
 
 import android.app.PendingIntent
-
-import java.io.FileInputStream
-
-import java.io.OutputStream
-
 import android.content.pm.PackageInstaller
-import android.content.pm.PackageInstaller.SessionParams
 
-import androidx.annotation.NonNull
+import android.content.pm.PackageInstaller.SessionParams
+import android.os.Environment
+import android.widget.EditText
+import android.widget.Toast
 
 
 class InstallActivity : AppCompatActivity() {
 
-    private var mDownloadReference: Long = 0
-    lateinit var mDownloadManager: DownloadManager
+//    private val ACTION_INSTALL_COMPLETE = "com.dontsc.fcm.INSTALL_COMPLETE"
+//    private val ACTION_UNINSTALL_COMPLETE = "com.afwsamples.testdpc.UNINSTALL_COMPLETE"
 
+//    private var mDownloadReference: Long = 0
+//    lateinit var mDownloadManager: DownloadManager
+
+    companion object {
+        private const val FILE_BASE_PATH = "file://"
+        private const val MIME_TYPE = "application/vnd.android.package-archive"
+    }
 
     private val TAG = "Install"
 
     private lateinit var startBtn: Button
     private lateinit var homeBtm: Button
+    private lateinit var apkUrl: EditText
+    private var latestFileName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,174 +55,214 @@ class InstallActivity : AppCompatActivity() {
 
         startBtn = findViewById(R.id.start_install)
         homeBtm = findViewById(R.id.homeBtn)
-
-
-//        autoInstall(
-//        downloadFiles(
-//            context = this,
-//            url = "https://kiosk-apk.s3.ap-northeast-2.amazonaws.com/auto_install.apk",
-//            filename = "auto.apk"
-//        )
-
+        apkUrl = findViewById(R.id.apk_url)
 
         startBtn.setOnClickListener {
-            val localApk = File("/storage/emulated/0/Download/auto.apk")
-            val commands = arrayOf("pm", "install", "-r", localApk.absolutePath)
-            Runtime.getRuntime().exec(commands)
+            val url = apkUrl.text.toString()
+            val point1 = url.lastIndexOf("/") + 1
+            val point2 = url.lastIndex
+            latestFileName = url.slice(IntRange(point1, point2))
+//            downloadFiles(
+//                context = this,
+//                url = apkUrl.text.toString(),
+//                filename = urlToFileName()
+//            )
+
+            enqueueDownload(
+                context = applicationContext,
+                url = apkUrl.text.toString()
+            )
         }
     }
 
-    @Throws(Exception::class)
-    fun install(context: Context, path: String) {
-        val file = File(path)
-        val apkName = path.substring(path.lastIndexOf(File.separator) + 1, path.lastIndexOf(".apk"))
-        //Get PackageInstaller
-        val packageInstaller = context.packageManager
-            .packageInstaller
-        val params = SessionParams(SessionParams.MODE_FULL_INSTALL)
-        var session: PackageInstaller.Session? = null
-        var outputStream: OutputStream? = null
-        var inputStream: FileInputStream? = null
+    private fun enqueueDownload(context: Context, url: String) {
         try {
-            //Create Session
-            val sessionId = packageInstaller.createSession(params)
-            //Open Session
-            session = packageInstaller.openSession(sessionId)
-            //Get the output stream to write apk to session
-            outputStream = session.openWrite(apkName, 0, -1)
-            inputStream = FileInputStream(file)
-            val buffer = ByteArray(4096)
-            var n: Int
-            //Read apk file and write session
-            while (inputStream.read(buffer).also { n = it } > 0) {
-                outputStream.write(buffer, 0, n)
-            }
-            //You need to close the flow after writing, otherwise the exception "files still open" will be thrown
-            inputStream.close()
-            inputStream = null
-            outputStream.flush()
-            outputStream.close()
-            outputStream = null
-            //Configure the intent initiated after the installation is completed, usually to open the activity
-            val intent = Intent()
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-            val intentSender = pendingIntent.intentSender
-            //Submit to start installation
-            session.commit(intentSender)
-        } catch (e: IOException) {
-            throw RuntimeException("Couldn't install package", e)
-        } catch (e: RuntimeException) {
-            session?.abandon()
-            throw e
-        } finally {
-//            closeStream(inputStream)
-//            closeStream(outputStream)
-        }
-    }
+            var destination =
+                context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
 
-    private fun autoInstall(
-        url: String,
-        filename: String
-    ) {
-        val uri = Uri.parse(url)
+            destination += latestFileName
 
-        //Delete update file if exists
-        val file = File("/storage/emulated/0/$filename")
+            Log.e(TAG, "enqueueDownload: 파일 경로 : $destination")
 
-        if (file.exists()) //file.delete() - test this, I think sometimes it doesn't work
-            file.delete()
+            val uri = Uri.parse("$FILE_BASE_PATH$destination")
 
-        //set download manager
-        val request = DownloadManager.Request(uri)
-            .setDescription("setDescription")
-            .setTitle("setTitle")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-            .setDestinationInExternalPublicDir("/Download", filename)
+            val file = File(destination)
+            if (file.exists()) file.delete()
 
-        //set destination
-//        request.setDestinationUri(uri)
+            val downloadManager =
+                context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadUri = Uri.parse(url)
+            val request = DownloadManager.Request(downloadUri)
+            request.setMimeType(MIME_TYPE)
+            request.setTitle("title")
+            request.setDescription("des")
 
-        // get download service and enqueue file
-        val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val downloadId = manager.enqueue(request)
+            // set destination
+            request.setDestinationUri(uri)
 
-
-        //set BroadcastReceiver to install app when .apk is downloaded
-        val onComplete: BroadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(ctxt: Context?, intent: Intent?) {
-                Log.e(TAG, "onReceive: 다운 완료!")
-                val install = Intent(Intent.ACTION_VIEW)
-                install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                install.setDataAndType(
-                    uri,
-                    manager.getMimeTypeForDownloadedFile(downloadId)
-                )
-                startActivity(install)
-                unregisterReceiver(this)
-                finish()
-            }
-        }
-
-        //register receiver for when .apk download is compete
-        registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-    }
-
-
-    private fun downloadFiles(context: Context, url: String, filename: String) {
-        try {
-            val file = File("/storage/emulated/0/$filename")
-
-            if (file.exists()) {
-                return
-            }
-            mDownloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val uri = Uri.parse(url)
-            val request = DownloadManager.Request(uri)
-                .setTitle(filename)
-                .setDescription("Downloading")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setDestinationInExternalPublicDir("/Download", filename)
-            mDownloadReference = mDownloadManager.enqueue(request)
+            showInstallOption(context, destination)
+            // Enqueue a new download and same the referenceId
+            downloadManager.enqueue(request)
+            Toast.makeText(context, "downloading", Toast.LENGTH_LONG)
+                .show()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Toast.makeText(context, "올바은 URL이 아니거나 문제가 발생하였습니다.", Toast.LENGTH_SHORT).show()
         }
-
-        downloadState(context)
     }
 
-    private fun downloadState(context: Context) {
-        val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        val receiverDownloadComplete = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val reference = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
-
-                if (mDownloadReference == reference) {
-                    val query = DownloadManager.Query();
-                    query.setFilterById(reference);
-                    val cursor = mDownloadManager.query(query);
-
-                    cursor.moveToFirst();
-
-                    val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                    val status = cursor.getInt(columnIndex);
-
-                    cursor.close()
-                    when (status) {
-                        DownloadManager.STATUS_SUCCESSFUL -> {
-                            Log.e(TAG, "onReceive: 성공")
-                        }
-
-                        DownloadManager.STATUS_FAILED -> {
-                            Log.e(TAG, "onReceive: 실패")
-                        }
-
-                        DownloadManager.ERROR_FILE_ERROR -> {
-                            Log.e(TAG, "onReceive: 실패2")
-                        }
-                    }
-                }
+    private fun showInstallOption(context: Context, destination: String) {
+        // set BroadcastReceiver to install app when .apk is downloaded
+        val onComplete = object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent
+            ) {
+                install1(context, "com.dontsc.fcm", destination)
             }
         }
-        context.registerReceiver(receiverDownloadComplete, intentFilter)
+        context.registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
+
+    fun install1(context: Context, packageName: String, apkPath: String) {
+
+        // PackageManager provides an instance of PackageInstaller
+        val packageInstaller = context.packageManager.packageInstaller
+
+        // Prepare params for installing one APK file with MODE_FULL_INSTALL
+        // We could use MODE_INHERIT_EXISTING to install multiple split APKs
+        val params =
+            PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
+        params.setAppPackageName(packageName)
+
+        // Get a PackageInstaller.Session for performing the actual update
+        val sessionId = packageInstaller.createSession(params)
+        val session = packageInstaller.openSession(sessionId)
+
+        // Copy APK file bytes into OutputStream provided by install Session
+        val out = session.openWrite(packageName, 0, -1)
+        val fis = File(apkPath).inputStream()
+        fis.copyTo(out)
+        session.fsync(out)
+        out.close()
+
+        // The app gets killed after installation session commit
+        session.commit(
+            PendingIntent.getBroadcast(
+                context, sessionId,
+                Intent("android.intent.action.MAIN"), 0
+            ).intentSender
+        )
+    }
+
+
+    private fun urlToFileName(): String {
+        val url = apkUrl.text.toString()
+        val point1 = url.lastIndexOf("/") + 1
+        val point2 = url.lastIndex
+        return url.slice(IntRange(point1, point2))
+    }
+
+//    private fun downloadFiles(context: Context, url: String, filename: String) {
+//        try {
+//            val file = File("/storage/emulated/0/Download/$filename")
+//
+//            if (file.exists()) {
+//                Log.e(TAG, "downloadFiles: 파일 있음")
+//                install1(context, "com.dontsc.fcm", "/storage/emulated/0/Download/$filename")
+//                return
+//            }
+//            mDownloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//            val uri = Uri.parse(url)
+//            val request = DownloadManager.Request(uri)
+//                .setTitle(filename)
+//                .setDescription("Downloading")
+//                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+//                .setDestinationInExternalPublicDir("/Download", filename)
+//
+//            Log.e(TAG, "화긴~_~: $request")
+//            mDownloadReference = mDownloadManager.enqueue(request)
+//
+//            showInstallOption(context, "/storage/emulated/0/Download/$filename")
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//
+//        downloadState(context)
+//    }
+
+//    private fun downloadState(context: Context) {
+//        val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+//        val receiverDownloadComplete = object : BroadcastReceiver() {
+//            override fun onReceive(context: Context?, intent: Intent?) {
+//                val reference = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
+//
+//                if (mDownloadReference == reference) {
+//                    val query = DownloadManager.Query();
+//                    query.setFilterById(reference);
+//                    val cursor = mDownloadManager.query(query);
+//
+//                    cursor.moveToFirst();
+//
+//                    val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+//                    val status = cursor.getInt(columnIndex);
+//
+//                    cursor.close()
+//                    when (status) {
+//                        DownloadManager.STATUS_SUCCESSFUL -> {
+//                            Log.e(TAG, "onReceive: 성공")
+//                        }
+//
+//                        DownloadManager.STATUS_FAILED -> {
+//                            Log.e(TAG, "onReceive: 실패")
+//                        }
+//
+//                        DownloadManager.ERROR_FILE_ERROR -> {
+//                            Log.e(TAG, "onReceive: 실패2")
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        context.registerReceiver(receiverDownloadComplete, intentFilter)
+//    }
+//
+//
+//    private fun showInstallOption(context: Context, destination: String) {
+//        val onComplete = object : BroadcastReceiver() {
+//            override fun onReceive(
+//                context: Context,
+//                intent: Intent
+//            ) {
+//                Log.e(TAG, "onReceive: 다운 끝 !")
+////                install1(context, "com.dontsc.fcm", destination)
+//            }
+//        }
+//        context.registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+//    }
+//
+//    fun install1(context: Context, packageName: String, apkPath: String) {
+//
+//        val packageInstaller = context.packageManager.packageInstaller
+//        val params =
+//            SessionParams(SessionParams.MODE_FULL_INSTALL)
+//        params.setAppPackageName(packageName)
+//
+//        val sessionId = packageInstaller.createSession(params)
+//        val session = packageInstaller.openSession(sessionId)
+//
+//        val out = session.openWrite(packageName, 0, -1)
+//        val fis = File(apkPath).inputStream()
+//        fis.copyTo(out)
+//        session.fsync(out)
+//        out.close()
+//
+//        session.commit(
+//            PendingIntent.getBroadcast(
+//                context, sessionId,
+//                Intent("android.intent.action.MAIN"), 0
+//            ).intentSender
+//        )
+//    }
+
+
 }
